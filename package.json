@@ -1,0 +1,33 @@
+{
+  "name": "ai-topic-agent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "vite",
+    "dev:backend": "node src/backend/dev-server.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.37",
+    "ai": "^6.0.134",
+    "axios": "^1.13.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "eventsource-parser": "^3.0.6",
+    "express": "^5.2.1",
+    "marked": "^17.0.5",
+    "vite": "^8.0.1"
+  },
+  "devDependencies": {
+    "chokidar": "^5.0.0",
+    "concurrently": "^9.2.1",
+    "vite-node": "^6.0.0"
+  }
+}
