@@ -11,11 +11,11 @@ async function getRealFinanceHotTopics() {
     )
     const str = response.data
     // 1. 去掉前面的 var 赋值和末尾分号，只保留 JSON 部分
-    const jsonStr = str.replace(/^[\s\S]*?=\s*/, '').replace(/;\s*$/, '');
+    const jsonStr = str.replace(/^[\s\S]*?=\s*/, '').replace(/;\s*$/, '')
     // 2. 安全解析为对象
     const allData = JSON.parse(jsonStr).data
     // 转换完成！
-    hotTopics = allData.map(v=>v.title)
+    hotTopics = allData.map((v) => v.title)
     // 简单解析（实际项目可用cheerio库解析）
     // const html = response.data
     // const hotTopics = []

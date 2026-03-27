@@ -25,6 +25,7 @@ npm run dev
 ```
 
 这会同时启动：
+
 - 前端开发服务器：http://localhost:8000 (Vite HMR)
 - 后端 API 服务：http://localhost:3100 (chokidar HMR)
 
@@ -44,9 +45,9 @@ npm run dev:backend
 
 ### 工作原理
 
-| 层级 | 工具 | 更新方式 | 速度 |
-|------|------|---------|------|
-| **前端** | Vite HMR | 模块热替换 | ⚡️ 毫秒级 |
+| 层级     | 工具         | 更新方式      | 速度      |
+| -------- | ------------ | ------------- | --------- |
+| **前端** | Vite HMR     | 模块热替换    | ⚡️ 毫秒级 |
 | **后端** | chokidar HMR | 缓存清除+重载 | ⚡️ 毫秒级 |
 
 ### HMR 优势
@@ -61,14 +62,27 @@ npm run dev:backend
 
 ## 📚 文档
 
+### 核心功能
+
 - [🚀 快速启动指南](./docs/QUICK-START.md) - 5分钟上手
 - [🔥 HMR 详细说明](./docs/HMR.md) - 实现原理和使用
 - [📊 方案对比](./docs/HMR-COMPARISON.md) - HMR vs nodemon vs pm2
 - [📝 项目总结](./docs/SUMMARY.md) - 完整功能概览
 
+### 组件库
+
+- [🎬 LottieIcon 组件](./docs/LOTTIE-ICON-GUIDE.md) - Lottie 动画图标使用指南
+
+### 布局与主题
+
+- [🎨 布局优化总结](./docs/LAYOUT-OPTIMIZATION-SUMMARY.md) - 侧边栏布局优化
+- [🌈 主题配置](./docs/THEME-CONFIG.md) - Ant Design 蓝主题
+- [🐛 Bug 修复说明](./docs/BUG-FIX-404.md) - 404 错误修复记录
+
 ## Vite 热更新方案
 
 ### 内置功能
+
 - **HMR (Hot Module Replacement)**：模块热替换，无需刷新
 - **Fast Refresh**：保留组件状态
 - **Error Overlay**：错误覆盖层显示
@@ -96,17 +110,16 @@ npm run dev:backend
 
 ```javascript
 // dev-server.js
-const chokidar = require('chokidar');
+const chokidar = require('chokidar')
 
 // 监听文件变化
-chokidar.watch(['src/backend/**/*.js'])
-  .on('change', (file) => {
-    // 清除缓存
-    delete require.cache[require.resolve('./routes')];
-    // 重新加载
-    routeHandlers = require('./routes');
-    console.log('✨ 热更新完成');
-  });
+chokidar.watch(['src/backend/**/*.js']).on('change', (file) => {
+  // 清除缓存
+  delete require.cache[require.resolve('./routes')]
+  // 重新加载
+  routeHandlers = require('./routes')
+  console.log('✨ 热更新完成')
+})
 ```
 
 ### Vite HMR 特点
@@ -145,6 +158,7 @@ npm run preview
 流式生成 AI 内容
 
 **请求：**
+
 ```json
 {
   "prompt": "生成3个A股行情相关选题"
@@ -152,6 +166,7 @@ npm run preview
 ```
 
 **响应：** SSE 流式数据
+
 ```
 data: {"text": "生成"}
 data: {"text": "的"}
@@ -162,11 +177,13 @@ data: [DONE]
 ## 技术栈
 
 ### 前端
+
 - Vite - 构建工具 + 开发服务器
 - Marked - Markdown 解析
 - 原生 JavaScript
 
 ### 后端
+
 - Express - Web 框架
 - AI SDK - AI 调用
 - chokidar - 文件监听（HMR）

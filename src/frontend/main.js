@@ -34,7 +34,7 @@ generateBtn.addEventListener('click', async () => {
   result.innerHTML = '<div style="color: #666;">正在生成中...</div>'
 
   try {
-    const response = await fetch('/api/ai/generate', {
+    const response = await fetch('http://localhost:3100/api/ai/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt })

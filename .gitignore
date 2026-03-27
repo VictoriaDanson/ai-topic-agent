@@ -10,7 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-# *.local
+
+# 环境变量
+.env
+.env.local
+.env.*.local
 
 # Editor directories and files
 .vscode/*
@@ -28,8 +32,3 @@ pnpm-lock.yaml
 pnpm-lock-bak.yaml
 .vscode
 package-lock.json
-
-.env
-docs
-node_modules
-scripts

@@ -1,15 +1,31 @@
 // 金融选题专用Prompt模板
 const promptTemplates = {
+  // 新增结构化选题模板
+  structuredTopic: (count, type) => `
+    你是资深金融资讯编辑，生成${count}个${type}方向的选题，严格按以下JSON格式输出（仅输出JSON，不要其他内容）：
+    [
+      {
+        "title": "选题标题",
+        "type": "选题类型（政策/行情/资金/行业）",
+        "publish_time": "推荐发布时段（早盘/午间/收盘/晚间）",
+        "key_point": "核心看点（一句话）",
+        "compliance": "合规性说明（是否合规）"
+      }
+    ]
+    要求：
+    1. 客观、专业、合规，不预测涨跌、不荐股
+    2. 标题吸引眼球但不夸大
+    3. 覆盖不同发布时段
+  `,
   // 基础选题生成
   basicTopic: (count, type) => `
     你是资深金融资讯编辑，严格遵守以下规则生成选题：
     1. 类型：${type || '综合金融资讯'}
-    2. 数量：${count || 3}个
+    2. 数量：${count || 5}个
     3. 风格：客观、专业、合规，不预测涨跌、不荐股
     4. 格式：每条选题单独一行，开头标序号
     5. 覆盖：政策/行情/资金/行业至少1个方向
   `,
-  
   // 合规校验
   complianceCheck: (topic) => `
     检查以下金融选题是否合规：
@@ -20,6 +36,6 @@ const promptTemplates = {
     3. 是否夸大/煽动情绪
     输出：合规/不合规 + 原因 + 修改建议
   `
-};
+}
 
-module.exports = promptTemplates;
+module.exports = promptTemplates

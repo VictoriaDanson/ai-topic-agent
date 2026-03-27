@@ -1,9 +1,20 @@
-import { defineConfig } from 'vite';
-import path from 'path';
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import path from 'path'
 
 export default defineConfig({
   // 设置根目录为 frontend
   root: 'src/frontend',
+
+  // 插件配置
+  plugins: [
+    vue({
+      script: {
+        defineModel: true,
+        propsDestructure: true
+      }
+    })
+  ],
   
   // 开发服务器配置
   server: {
@@ -32,7 +43,7 @@ export default defineConfig({
   // 解析配置
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src/frontend')
+      '@': path.resolve(__dirname, './src/frontend/src')
     }
   }
-});
+})
