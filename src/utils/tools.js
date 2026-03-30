@@ -1,21 +1,17 @@
-// 替换模拟热点为真实API
-const axios = require('axios')
-
 // 真实财经热点获取
 async function getRealFinanceHotTopics() {
   try {
     // 新浪财经热点API
-    const response = await axios.get(
-      'http://top.finance.sina.com.cn/ws/GetTopDataList.php?top_type=day&top_cat=finance_0_suda&top_time=20260324&top_show_num=20&top_order=DESC&js_var=all_1_data&get_new=1',
-      {}
+    const response = await fetch(
+      'http://top.finance.sina.com.cn/ws/GetTopDataList.php?top_type=day&top_cat=finance_0_suda&top_time=20260324&top_show_num=20&top_order=DESC&js_var=all_1_data&get_new=1'
     )
-    const str = response.data
+    const str = await response.text()
     // 1. 去掉前面的 var 赋值和末尾分号，只保留 JSON 部分
     const jsonStr = str.replace(/^[\s\S]*?=\s*/, '').replace(/;\s*$/, '')
     // 2. 安全解析为对象
     const allData = JSON.parse(jsonStr).data
     // 转换完成！
-    hotTopics = allData.map((v) => v.title)
+    const hotTopics = allData.map((v) => v.title)
     // 简单解析（实际项目可用cheerio库解析）
     // const html = response.data
     // const hotTopics = []
@@ -30,7 +26,6 @@ async function getRealFinanceHotTopics() {
     //     count++
     //   }
     // }
-    console.log('hotTopics===', hotTopics)
     return hotTopics.length > 0 ? hotTopics : ['暂无实时热点']
   } catch (error) {
     console.error('获取财经热点失败:', error.message)

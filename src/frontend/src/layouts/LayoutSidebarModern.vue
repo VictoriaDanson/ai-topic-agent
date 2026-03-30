@@ -68,11 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import TopicGenerator from '@/components/TopicGenerator.vue'
-import FunctionCallTopic from '@/components/FunctionCallTopic.vue'
-import TopicStructured from '@/components/TopicStructured.vue'
 import LottieIcon from '@/components/LottieIcon.vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
 
 interface Tab {
   id: string
@@ -83,27 +80,43 @@ interface Tab {
   badge?: string
 }
 
+// 动态导入 topic 目录下的所有组件
 const tabs: Tab[] = [
   {
     id: 'stream',
     label: '流式生成',
     desc: '实时生成选题',
     icon: 'writeback',
-    component: TopicGenerator
+    component: defineAsyncComponent(
+      () => import('@/pages/topic/TopicGenerator.vue')
+    )
   },
   {
     id: 'hotspot',
     label: '热点选题',
     desc: '基于实时热点',
     icon: 'data',
-    component: FunctionCallTopic
+    component: defineAsyncComponent(
+      () => import('@/pages/topic/FunctionCallTopic.vue')
+    )
   },
   {
     id: 'structured',
     label: '结构化生成',
     desc: '高级定制选题',
     icon: 'tidy',
-    component: TopicStructured
+    component: defineAsyncComponent(
+      () => import('@/pages/topic/TopicStructured.vue')
+    )
+  },
+  {
+    id: 'agenttopic',
+    label: '分步生成',
+    desc: 'Agent选题',
+    icon: 'writeback',
+    component: defineAsyncComponent(
+      () => import('@/pages/topic/AgentTopic.vue')
+    )
   }
 ]
 

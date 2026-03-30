@@ -9,6 +9,9 @@ const {
 } = require('../utils/tools')
 const { callAiAPI } = require('../utils/aiClient')
 const promptTemplates = require('../utils/promptTemplates')
+const TopicAgent = require('../utils/agent')
+const aiService = require('./services/aiService')
+const topicAgentService = require('./services/topicAgentService')
 
 // 配置 AI 模型
 const customProvider = createOpenAICompatible({
@@ -77,6 +80,31 @@ const routes = {
       })
     }
   },
+  // 结构化选题生成（基础生成）
+  '/api/topic/generate': {
+    post: async (req, res) => {
+      try {
+        const { count = 3, type = '综合金融' } = req.body || {}
+        const topics = await aiService.generateStructuredTopics(count, type)
+        res.json({ code: 200, data: topics })
+      } catch (error) {
+        console.error('❌ 结构化选题生成失败:', error)
+        res.json({ code: 500, message: error.message })
+      }
+    }
+  },
+  // 基于实时热点生成选题
+  '/api/topic/hot': {
+    post: async (req, res) => {
+      try {
+        const topics = await aiService.generateHotTopics()
+        res.json({ code: 200, data: topics })
+      } catch (error) {
+        console.error('❌ 热点选题生成失败:', error)
+        res.json({ code: 500, message: error.message })
+      }
+    }
+  },
   '/api/ai/function/call': {
     post: async (req, res) => {
       try {
@@ -119,17 +147,40 @@ const routes = {
       }
     }
   },
-  '/api/ai/topic/structured': {
+  '/api/ai/agent/run': {
     post: async (req, res) => {
-      const { count = 3, type = '综合金融' } = req.body
+      const { prompt } = req.body
+      if (!prompt) {
+        return res.json({ code: 400, message: '请输入需求' })
+      }
+
       try {
-        const prompt = promptTemplates.structuredTopic(count, type)
-        const result = await callAiAPI(prompt)
-        // 解析JSON
-        const topics = JSON.parse(result)
-        res.json({ code: 200, data: topics })
+        const agent = new TopicAgent()
+        const result = await agent.run(prompt)
+        res.json({ code: 200, data: result })
       } catch (error) {
-        res.json({ code: 500, message: '生成/解析失败：' + error.message })
+        res.json({ code: 500, message: error.message })
+      }
+    }
+  },
+  '/api/topic/check': {
+    post: async (req, res) => {
+      try {
+        const { topic } = req.body
+        const result = await aiService.checkCompliance(topic)
+        res.json({ code: 200, data: result })
+      } catch (error) {
+        res.json({ code: 500, message: error.message })
+      }
+    }
+  },
+  '/api/agent/topic/run': {
+    post: async (req, res) => {
+      try {
+        const result = await topicAgentService.run(req.body)
+        res.json({ code: 200, data: result })
+      } catch (error) {
+        res.json({ code: 500, message: error.message })
       }
     }
   }

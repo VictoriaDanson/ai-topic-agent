@@ -560,6 +560,115 @@ class Request {
   }
 
   /**
+   * 流式请求（返回原始 Response，适用于 SSE 等场景）
+   */
+  async stream(url: string, config: RequestConfig = {}): Promise<Response> {
+    // 合并配置
+    let requestConfig: RequestConfig = {
+      ...config,
+      headers: {
+        ...this.defaultHeaders,
+        ...config.headers
+      }
+    }
+
+    // 执行请求拦截器
+    if (this.interceptors.request) {
+      try {
+        requestConfig = await this.interceptors.request(requestConfig)
+      } catch (error) {
+        const reqError =
+          error instanceof RequestError
+            ? error
+            : new RequestError('请求拦截器错误', ErrorType.UNKNOWN_ERROR)
+        this.interceptors.requestError?.(reqError)
+        throw reqError
+      }
+    }
+
+    // 构建完整 URL
+    const fullURL = this.buildURL(url, requestConfig.params)
+
+    // 创建 AbortController
+    const controller = new AbortController()
+    this.pendingRequests.set(fullURL, controller)
+
+    // 处理请求体
+    const fetchConfig: RequestInit = {
+      ...requestConfig,
+      headers: requestConfig.headers,
+      signal: controller.signal
+    }
+
+    if (requestConfig.data && requestConfig.method !== 'GET') {
+      if (requestConfig.headers?.['Content-Type'] === 'application/json') {
+        fetchConfig.body = JSON.stringify(requestConfig.data)
+      } else if (requestConfig.data instanceof FormData) {
+        fetchConfig.body = requestConfig.data
+        delete fetchConfig.headers
+      } else {
+        fetchConfig.body = requestConfig.data as BodyInit
+      }
+    }
+
+    // 超时控制
+    const timeout = requestConfig.timeout || this.timeout
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+    try {
+      let response = await fetch(fullURL, fetchConfig)
+
+      clearTimeout(timeoutId)
+      this.pendingRequests.delete(fullURL)
+
+      // 执行响应拦截器
+      if (this.interceptors.response) {
+        response = await this.interceptors.response(response)
+      }
+
+      // 验证状态码
+      const validateStatus =
+        requestConfig.validateStatus || this.defaultValidateStatus
+      if (!validateStatus(response.status)) {
+        this.handleHttpError(response)
+      }
+
+      return response
+    } catch (error) {
+      clearTimeout(timeoutId)
+      this.pendingRequests.delete(fullURL)
+
+      let requestError: RequestError
+
+      if (error instanceof RequestError) {
+        requestError = error
+      } else if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          requestError = new RequestError(
+            '请求已取消或超时',
+            ErrorType.TIMEOUT_ERROR
+          )
+        } else if (error.message.includes('fetch')) {
+          requestError = new RequestError(
+            '网络连接失败',
+            ErrorType.NETWORK_ERROR
+          )
+        } else {
+          requestError = new RequestError(
+            error.message,
+            ErrorType.UNKNOWN_ERROR
+          )
+        }
+      } else {
+        requestError = new RequestError('未知错误', ErrorType.UNKNOWN_ERROR)
+      }
+
+      this.interceptors.responseError?.(requestError)
+      throw requestError
+    }
+  }
+
+  /**
    * HEAD 请求
    */
   async head(url: string, config?: RequestConfig): Promise<Response> {
@@ -677,8 +786,9 @@ export const apiRequest = {
   /**
    * POST 请求
    */
-  post: <T = unknown>(url: string, data?: unknown) =>
-    request.post<ApiResponse<T>>(url, data),
+  post: <T = unknown>(url: string, data?: unknown) => {
+    return request.post<ApiResponse<T>>(url, data)
+  },
 
   /**
    * PUT 请求

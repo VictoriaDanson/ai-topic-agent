@@ -5,7 +5,6 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "ignoreDeprecations": "6.0",
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -28,6 +27,6 @@
       "@/*": ["./src/frontend/src/*"]
     }
   },
-  "include": ["src/frontend/src/**/*.ts", "src/frontend/src/**/*.tsx", "src/frontend/src/**/*.vue"],
+  "include": ["src/frontend/src/**/*.ts", "src/frontend/src/**/*.tsx", "src/frontend/src/**/*.vue", "src/*"],
   "exclude": ["node_modules", "dist"]
 }

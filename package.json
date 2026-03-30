@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
     "dev:frontend": "vite",
     "dev:backend": "node src/backend/dev-server.js",
     "build": "vue-tsc && vite build",
@@ -22,7 +22,6 @@
     "@types/node": "^25.5.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "ai": "^6.0.134",
-    "axios": "^1.13.6",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "eventsource-parser": "^3.0.6",
@@ -33,6 +32,7 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.1",
     "vue": "^3.5.31",
+    "vue-router": "^5.0.4",
     "vue-tsc": "^3.2.6"
   },
   "devDependencies": {

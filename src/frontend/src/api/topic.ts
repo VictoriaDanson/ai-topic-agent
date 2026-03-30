@@ -1,4 +1,4 @@
-import apiClient from './index'
+import request, { apiRequest } from '@/utils/request'
 import type {
   TopicGenerateRequest,
   FunctionCallRequest,
@@ -12,18 +12,10 @@ import type {
 export async function generateTopicStream(
   data: TopicGenerateRequest
 ): Promise<Response> {
-  const response = await fetch('/api/ai/generate', {
+  const response = await request.stream('/ai/generate', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+    data
   })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
-  }
-
   return response
 }
 
@@ -33,11 +25,8 @@ export async function generateTopicStream(
 export async function functionCallTopic(
   data: FunctionCallRequest
 ): Promise<ApiResponse<string>> {
-  const response = await apiClient.post<ApiResponse<string>>(
-    '/ai/function/call',
-    data
-  )
-  return response.data
+  const res = await apiRequest.post<string>('/ai/function/call', data)
+  return res
 }
 
 /**
@@ -46,17 +35,25 @@ export async function functionCallTopic(
 export async function structuredTopic(
   data: StructuredTopicRequest
 ): Promise<ApiResponse> {
-  const response = await apiClient.post<ApiResponse>(
-    '/ai/topic/structured',
-    data
-  )
-  return response.data
+  // 使用后端已实现的结构化选题生成接口
+  const res = await apiRequest.post('/topic/generate', data)
+  return res
 }
 
 /**
  * 测试接口
  */
 export async function testApi(): Promise<ApiResponse> {
-  const response = await apiClient.get<ApiResponse>('/test')
-  return response.data
+  const res = await apiRequest.get('/test')
+  return res
+}
+
+/**
+ * 合规检查
+ */
+export async function checkTopicCompliance(
+  topic: string
+): Promise<ApiResponse<string>> {
+  const res = await apiRequest.post<string>('/topic/check', { topic })
+  return res
 }

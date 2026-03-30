@@ -1,49 +1,69 @@
 const { callAiAPI } = require('./aiClient');
 
-// 选题Agent：任务拆解→执行→整合
+// 完善Agent类，实现完整工作流
 class TopicAgent {
   constructor() {
-    this.steps = [
-      '分析用户需求，确定选题方向和数量',
-      '获取相关财经热点数据',
-      '生成初步选题列表',
-      '合规性检查和筛选',
-      '优化标题和核心看点'
+    this.workflow = [
+      {
+        name: '需求分析',
+        execute: async (context) => {
+          const prompt = `分析以下用户需求，提取选题数量、类型、场景：${context.userInput}
+          输出JSON：{"count":数字,"type":"字符串","scene":"字符串"}`;
+          const result = await callAiAPI(prompt);
+          return JSON.parse(result);
+        }
+      },
+      {
+        name: '热点获取',
+        execute: async (context) => {
+          return await tools.getFinanceHotTopics();
+        }
+      },
+      {
+        name: '选题生成',
+        execute: async (context) => {
+          const prompt = promptTemplates.structuredTopic(
+            context.需求分析.count,
+            context.需求分析.type
+          );
+          const result = await callAiAPI(prompt);
+          return JSON.parse(result);
+        }
+      },
+      {
+        name: '合规检查',
+        execute: async (context) => {
+          const checkedTopics = [];
+          for (const topic of context.选题生成) {
+            const prompt = promptTemplates.complianceCheck(topic.title);
+            const checkResult = await callAiAPI(prompt);
+            checkedTopics.push({
+              ...topic,
+              compliance: checkResult.includes('合规') ? '合规' : '不合规',
+              compliance_note: checkResult
+            });
+          }
+          return checkedTopics;
+        }
+      },
+      {
+        name: '选题筛选',
+        execute: async (context) => {
+          return context.合规检查.filter(t => t.compliance === '合规');
+        }
+      }
     ];
   }
 
-  // 执行Agent
-  async run(prompt) {
-    console.log('选题Agent开始执行...');
-    let context = `用户需求：${prompt}`;
+  async run(userInput) {
+    const context = { userInput };
     
-    for (let i = 0; i < this.steps.length; i++) {
-      const step = this.steps[i];
-      console.log(`执行步骤 ${i+1}: ${step}`);
-      
-      // 调用AI执行当前步骤
-      const stepPrompt = `
-        当前执行步骤：${step}
-        上下文：${context}
-        请执行该步骤，输出执行结果（简洁明了）
-        如果你需要调用工具，请说明需要调用的工具名称和原因
-      `;
-      
-      const stepResult = await callAiAPI(stepPrompt);
-      context += `\n步骤${i+1}结果：${stepResult}`;
+    // 执行工作流
+    for (const step of this.workflow) {
+      console.log(`执行：${step.name}`);
+      context[step.name] = await step.execute(context);
     }
     
-    // 生成最终结果
-    const finalPrompt = `
-      基于以下执行过程，生成结构化的金融选题列表（JSON格式）：
-      ${context}
-      格式要求：[{"title":"","type":"","publish_time":"","key_point":"","compliance":""}]
-      数量：3个，合规、专业、有热点相关性
-    `;
-    
-    const finalResult = await callAiAPI(finalPrompt);
-    return JSON.parse(finalResult);
+    return context.选题筛选;
   }
 }
-
-module.exports = TopicAgent;

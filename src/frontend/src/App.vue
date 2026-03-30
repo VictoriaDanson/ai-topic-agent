@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <LayoutSidebarModern />
+    <RouterView />
   </div>
 </template>
 
 <script setup lang="ts">
-import LayoutSidebarModern from '@/layouts/LayoutSidebarModern.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <style>
