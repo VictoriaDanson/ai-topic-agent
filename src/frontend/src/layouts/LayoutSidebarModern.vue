@@ -86,13 +86,13 @@ const tabs: Tab[] = [
     id: 'stream',
     label: '流式生成',
     desc: '实时生成选题',
-    icon: 'writeback',
+    icon: 'writeBack',
     component: defineAsyncComponent(
       () => import('@/pages/topic/TopicGenerator.vue')
     )
   },
   {
-    id: 'hotspot',
+    id: 'hotSpot',
     label: '热点选题',
     desc: '基于实时热点',
     icon: 'data',
@@ -110,12 +110,30 @@ const tabs: Tab[] = [
     )
   },
   {
-    id: 'agenttopic',
+    id: 'agentTopic',
     label: '分步生成',
     desc: 'Agent选题',
-    icon: 'writeback',
+    icon: 'data',
     component: defineAsyncComponent(
       () => import('@/pages/topic/AgentTopic.vue')
+    )
+  },
+  {
+    id: 'topicCheck',
+    label: '合规检查',
+    desc: '合规检查',
+    icon: 'writeBack',
+    component: defineAsyncComponent(
+      () => import('@/pages/topic/TopicCheck.vue')
+    )
+  },
+  {
+    id: 'topicEvaluator',
+    label: '高质量选题',
+    desc: '生成高质量选题',
+    icon: 'data',
+    component: defineAsyncComponent(
+      () => import('@/pages/topic/TopicEvaluator.vue')
     )
   }
 ]
@@ -143,14 +161,6 @@ const currentTabLabel = computed(() => {
 const currentTabDesc = computed(() => {
   return tabs.find((tab) => tab.id === activeTab.value)?.desc || ''
 })
-
-const showSettings = () => {
-  alert('设置功能开发中...')
-}
-
-const showHelp = () => {
-  alert('帮助文档开发中...')
-}
 </script>
 
 <style scoped>

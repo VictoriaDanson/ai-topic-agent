@@ -10,18 +10,18 @@ class TopicAgentService {
     
     try {
       // 1. 获取多源热点数据
-      console.log('Step 1: 获取热点数据');
       const hotData = await FinanceAPIs.getAllHotTopics();
+      console.log('Step 1: 获取热点数据===', hotData);
       
       // 2. 生成初始选题（数量翻倍，用于筛选）
-      console.log('Step 2: 生成初始选题');
       const prompt = promptTemplates.structuredTopic(count * 2, type, hotData);
       const rawResult = await callAiAPI(prompt);
       const rawTopics = JSON.parse(rawResult);
+      console.log('Step 2: 生成初始选题===',rawTopics);
       
       // 3. 评估和筛选
-      console.log('Step 3: 评估和筛选选题');
       const evaluatedTopics = await TopicEvaluator.evaluateAndFilter(rawTopics, 7);
+      console.log('Step 3: 评估和筛选选题===',evaluatedTopics);
       
       // 4. 截取指定数量
       const finalTopics = evaluatedTopics.slice(0, count);

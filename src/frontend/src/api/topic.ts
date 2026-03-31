@@ -57,3 +57,13 @@ export async function checkTopicCompliance(
   const res = await apiRequest.post<string>('/topic/check', { topic })
   return res
 }
+
+/**
+ * 高质量选题
+ */
+export async function agentTopicRun(
+  data: StructuredTopicRequest
+): Promise<ApiResponse<string>> {
+  const res = await apiRequest.post<string>('/agent/topic/run', data)
+  return res
+}

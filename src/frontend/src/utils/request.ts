@@ -695,7 +695,7 @@ class Request {
  */
 const request = new Request({
   baseURL: envConfig.apiBaseURL,
-  timeout: envConfig.apiTimeout
+  timeout: 86400000 // envConfig.apiTimeout
 })
 
 // 开发环境下打印请求日志
