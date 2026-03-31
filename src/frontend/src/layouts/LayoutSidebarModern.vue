@@ -22,6 +22,7 @@
             v-for="tab in tabs"
             :key="tab.id"
             :class="['nav-item', { active: activeTab === tab.id }]"
+            :data-tab-id="tab.id"
             @click="activeTab = tab.id"
             :title="tab.label"
           >
@@ -69,7 +70,14 @@
 
 <script setup lang="ts">
 import LottieIcon from '@/components/LottieIcon.vue'
-import { ref, computed, defineAsyncComponent } from 'vue'
+import {
+  ref,
+  computed,
+  defineAsyncComponent,
+  watch,
+  nextTick,
+  onMounted
+} from 'vue'
 
 interface Tab {
   id: string
@@ -129,9 +137,9 @@ const tabs: Tab[] = [
   },
   {
     id: 'topicEvaluator',
-    label: '高质量选题',
-    desc: '生成高质量选题',
-    icon: 'data',
+    label: '智能Agent自动',
+    desc: '智能Agent自动选题',
+    icon: 'data',                  
     component: defineAsyncComponent(
       () => import('@/pages/topic/TopicEvaluator.vue')
     )
@@ -141,8 +149,17 @@ const tabs: Tab[] = [
 const activeTab = ref(localStorage.getItem('activeTab') || 'stream')
 const isCollapsed = ref(localStorage.getItem('sidebarCollapsed') === 'true')
 
+onMounted(() => {
+  nextTick(() => {
+    const btn = document.querySelector<HTMLButtonElement>(
+      `.nav-item[data-tab-id="${activeTab.value}"]`
+    )
+    if (btn) {
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  })
+})
 // 保存状态到 localStorage
-import { watch } from 'vue'
 watch(activeTab, (newTab) => {
   localStorage.setItem('activeTab', newTab)
 })

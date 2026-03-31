@@ -38,7 +38,7 @@
             <tr>
               <th align="center">序号</th>
               <th>选题标题</th>
-              <th>类型</th>
+              <th align="center">类型</th>
               <th width="110">推荐发布时段</th>
               <th>核心看点</th>
               <th width="74">合规性</th>
@@ -50,7 +50,7 @@
             <tr v-for="(topic, index) in topics" :key="index">
               <td align="center">{{ index + 1 }}</td>
               <td>{{ topic.title || '-' }}</td>
-              <td>{{ topic.type || '-' }}</td>
+              <td align="center">{{ topic.type || '-' }}</td>
               <td align="center">{{ topic.publish_time || '-' }}</td>
               <td>{{ topic.key_point || '-' }}</td>
               <td align="center">{{ topic.compliance || '-' }}</td>
